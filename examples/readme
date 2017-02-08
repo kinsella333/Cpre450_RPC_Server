@@ -1,0 +1,13 @@
+
+Please follow the following steps:
+
+1. rpcgen -k date.x
+
+2. gcc -o cli client.c date_clnt.c
+
+3. gcc -o svc server.c date_svc.c
+
+4. ./svc &
+
+5. ./cli localhost
+
