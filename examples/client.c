@@ -54,6 +54,12 @@ int main(int argc, char **argv){
   response = get_response();
 
   while(response!=6){
+
+    if(response == 7){
+      system("pkill server");
+      break;
+    }
+
 	   if((sresult = date_1(lresult,cl)) == NULL){
 	      clnt_perror(cl,server);
 	      exit(3);
@@ -61,11 +67,6 @@ int main(int argc, char **argv){
 
  	   printf(" %s\n", *sresult);
 	   response = get_response();
-
-     if(response == 7){
-       response = 6;
-       system("pkill server");
-     }
   }
 
   clnt_destroy(cl);

@@ -125,11 +125,6 @@ long *option;
     ptr=t;
     break;
 
-  case 7:
-    sprintf(s, "%s", "Killing Server and Exiting, Goodbye");
-    ptr=s;
-    break;
-
 	default: ptr=err;
 	  break;
   }
