@@ -5,7 +5,7 @@
 #include <rpc/rpc.h>
 #include "date.h"
 
-#define MAX 100
+#define SIZE 100
 long get_response(void);
 
 
@@ -15,7 +15,7 @@ long get_response()
 
   printf("Menu: \n");
   printf("1. System Time\n");
-  printf("2. CPU Usage --TODO\n");
+  printf("2. CPU Usage\n");
   printf("3. Memory Usage --TODO\n");
   printf("4. Load Procs per min --TODO\n");
   printf("5. Uptime\n");
@@ -29,11 +29,11 @@ long get_response()
 }
 
 
-main(int argc, char **argv){
+int main(int argc, char **argv){
   CLIENT *cl;
   char *server;
   char **sresult;
-  char s[MAX];
+  char s[SIZE];
   long response;
   long *lresult;
 
