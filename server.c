@@ -26,7 +26,7 @@ long *option;
   struct tm *timeptr;
   time_t clock;
   static char *ptr;
-  static char s[SIZE], t[SIZE], err[] = "\bInvalid Response \0";;
+  static char s[SIZE], t[SIZE], err[] = "\bInvalid Response\n \0";;
   struct sysinfo info;
   int day, hour, minute, second, i=0, cpu_found=0, tmp = 0, total=0, idle=0, x=0;
   unsigned long kb, mb, ramUsage = 0;
@@ -48,7 +48,7 @@ long *option;
 	  break;
 
   //Case 2: Return current CPU Usage as a percentage.
-  //Code from taken from https://github.com/hc0d3r/C/blob/master/linux-cpu-usage.c
+  //Code from https://github.com/hc0d3r/C/blob/master/linux-cpu-usage.c
 	case 2:
     //Verify that program can access proc/stat file
     if( (proc = fopen("/proc/stat","r")) == NULL){
@@ -61,22 +61,16 @@ long *option;
     while((c = fgetc(proc)) != EOF ){
       if( (c == 'c' && i == 0) || (c == 'p' && i == 1) || (c == 'u' && i == 2)){
         cpu_found++;
-      }
-
-      else if( c >= '0' && c <= '9' && cpu_found == 3){
+      }else if( c >= '0' && c <= '9' && cpu_found == 3){
         tmp *= 10;
         tmp += c-'0';
-      }
-
-      else if( c == ' ' && cpu_found == 3 ){
+      }else if( c == ' ' && cpu_found == 3 ){
         total += tmp;
         x++;
         if( x == 6 )
           idle = tmp;
         tmp = 0;
-      }
-
-      else if( c == '\n' && cpu_found == 3 ){
+      }else if( c == '\n' && cpu_found == 3 ){
         i = 0;
         cpu_found = 0;
         total += tmp;
