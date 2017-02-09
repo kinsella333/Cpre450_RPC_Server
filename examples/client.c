@@ -16,11 +16,12 @@ long get_response()
   printf("Menu: \n");
   printf("1. System Time\n");
   printf("2. CPU Usage\n");
-  printf("3. Memory Usage --TODO\n");
+  printf("3. Memory Usage\n");
   printf("4. Load Procs per min --TODO\n");
   printf("5. Uptime\n");
   printf("6. Exit\n");
-  printf("Enter Choice (1-6):");
+  printf("7. Kill Server and Exit\n");
+  printf("Enter Choice (1-7):");
   scanf("%ld", &choice);
 
   system("clear");
@@ -60,6 +61,11 @@ int main(int argc, char **argv){
 
  	   printf(" %s\n", *sresult);
 	   response = get_response();
+
+     if(response == 7){
+       response = 6;
+       system("pkill server");
+     }
   }
 
   clnt_destroy(cl);

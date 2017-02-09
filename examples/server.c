@@ -21,9 +21,11 @@ long *option;
   static char t[SIZE];
   struct sysinfo info;
   int day, hour, minute, second;
+  unsigned long kb, mb;
   FILE *proc;
   char c;
   int i=0, cpu_found=0, tmp = 0, total=0, idle=0, x=0;
+  unsigned long ramUsage = 0;
 
 
   clock = time(0);
@@ -73,40 +75,54 @@ long *option;
       i++;
     }
 
-    sprintf(s, "\bCurrent CPU Usage: %6.2f%%\n", (float)(100*((total) - (idle)))/(float)total );
+    sprintf(s, "\bCurrent CPU Usage:%6.2f%%\n", (float)(100*((total) - (idle)))/(float)total );
     fclose(proc);
     ptr=s;
 	  break;
 
 	case 3:
-    
-	  ptr=s;
+    sysinfo(&info);
+    ramUsage = info.totalram - info.freeram;
+    if(ramUsage > 1048575){
+        mb = ramUsage/1048576;
+        kb = (ramUsage - mb*1048576)/1024.0;
+        sprintf(t, "\bMemory Usage: %luMBs %luKBs\nTotal Memory: %5.1lfMBs\nPercentage In Use:%5.1lf%%\n", mb, kb, info.totalram/1048576.0, ((ramUsage*1.0)/(info.totalram*1.0))*100.0);
+    }else{
+        kb = ramUsage/1024.0;
+        sprintf(t, "\bMemory Usage: %luKBs\nTotal Memory: %5.1lfMBs\n", kb, info.totalram/1048576.0);
+    }
+	  ptr=t;
 	  break;
 
   case 5:
-  sysinfo(&info);
+    sysinfo(&info);
 
-  if(info.uptime > 86399){
-      day = info.uptime/86400;
-      hour = (info.uptime - day*86400)/3600;
-      minute = (info.uptime - day*3600)/60;
-      second = (info.uptime - day*3600 - hour*3600 - minute*60);
-      sprintf(t, "\bUptime: %d Days %d Hours %d Minutes %d Seconds\n", day, hour, minute ,second);
-  }else if(info.uptime > 3599){
-      hour = info.uptime/3600;
-      minute = (info.uptime - hour*3600)/60;
-      second = (info.uptime - hour*3600 - minute*60);
-      sprintf(t, "\bUptime: %d Hours %d Minutes %d Seconds\n", hour, minute, second);
-  }else if(info.uptime > 59){
-      minute = info.uptime/60;
-      second = (info.uptime - minute*60);
-      sprintf(t, "\bUptime: %d Minutes %d Seconds\n", minute, second);
-  }else{
-      second = info.uptime;
-      sprintf(t, "\bUptime: %d Seconds\n", second);
-  }
-  ptr=t;
-  break;
+    if(info.uptime > 86399){
+        day = info.uptime/86400;
+        hour = (info.uptime - day*86400)/3600;
+        minute = (info.uptime - day*86400 - hour*3600)/60;
+        second = (info.uptime - day*86400 - hour*3600 - minute*60);
+        sprintf(t, "\bUptime: %d Days %d Hours %d Minutes %d Seconds\n", day, hour, minute ,second);
+    }else if(info.uptime > 3599){
+        hour = info.uptime/3600;
+        minute = (info.uptime - hour*3600)/60;
+        second = (info.uptime - hour*3600 - minute*60);
+        sprintf(t, "\bUptime: %d Hours %d Minutes %d Seconds\n", hour, minute, second);
+    }else if(info.uptime > 59){
+        minute = info.uptime/60;
+        second = (info.uptime - minute*60);
+        sprintf(t, "\bUptime: %d Minutes %d Seconds\n", minute, second);
+    }else{
+        second = info.uptime;
+        sprintf(t, "\bUptime: %d Seconds\n", second);
+    }
+    ptr=t;
+    break;
+
+  case 7:
+    sprintf(s, "%s", "Killing Server and Exiting, Goodbye");
+    ptr=s;
+    break;
 
 	default: ptr=err;
 	  break;
