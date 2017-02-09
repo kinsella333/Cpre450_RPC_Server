@@ -1,3 +1,13 @@
+/*
+*   Server program developed from example code provided by Professor Guan.
+*   Program must be run before corresponding client code has been run to funtion
+*   correctly. Server listens for client input over RPC connection, and provides
+*   the requested information, given the menu choice from client.
+*
+*   Author: Ray Kinsella
+*   Skeleton Code Provided By: Dr. Guan
+*/
+
 #include <rpc/rpc.h>
 #include <time.h>
 #include <sys/types.h>
@@ -16,22 +26,20 @@ long *option;
   struct tm *timeptr;
   time_t clock;
   static char *ptr;
-  static char err[] = "Invalid Response \0";
-  static char s[SIZE];
-  static char t[SIZE];
+  static char s[SIZE], t[SIZE], err[] = "\bInvalid Response \0";;
   struct sysinfo info;
-  int day, hour, minute, second;
-  unsigned long kb, mb;
+  int day, hour, minute, second, i=0, cpu_found=0, tmp = 0, total=0, idle=0, x=0;
+  unsigned long kb, mb, ramUsage = 0;
   FILE *proc;
   char c;
-  int i=0, cpu_found=0, tmp = 0, total=0, idle=0, x=0;
-  unsigned long ramUsage = 0;
 
-
+  //Gather current System Time
   clock = time(0);
   timeptr = localtime(&clock);
 
+  //Switch based on user input in recieved from the client.
   switch(*option){
+  //Case 1: Return System Time of the Server Machine.
 	case 1:
     strcpy(t,"\bSystem Time: ");
     strftime(s,SIZE,"%A, %B %d, %Y - %T\n",timeptr);
@@ -39,14 +47,17 @@ long *option;
     ptr=t;
 	  break;
 
+  //Case 2: Return current CPU Usage as a percentage.
+  //Code from taken from https://github.com/hc0d3r/C/blob/master/linux-cpu-usage.c
 	case 2:
+    //Verify that program can access proc/stat file
     if( (proc = fopen("/proc/stat","r")) == NULL){
       sprintf(s, "Failed to open CPU stat file\n");
       ptr=s;
       break;
     }
 
-
+    //Loop through stat file, recording the total and idle CPU times
     while((c = fgetc(proc)) != EOF ){
       if( (c == 'c' && i == 0) || (c == 'p' && i == 1) || (c == 'u' && i == 2)){
         cpu_found++;
@@ -80,6 +91,7 @@ long *option;
     ptr=s;
 	  break;
 
+  //Case: 3 Gather the total and free ram values from the sysinfo object
 	case 3:
     sysinfo(&info);
     ramUsage = info.totalram - info.freeram;
@@ -94,12 +106,14 @@ long *option;
 	  ptr=t;
 	  break;
 
+  //Case 4: Gather the Load averages at 1,5, and 15 minutes from the sysinfo object
   case 4:
     sysinfo(&info);
     sprintf(s, "\bLoad Average at 1 Minute: %lu\nLoad Average at 5 Minutes: %lu\nLoad Average at 15 Minutes: %lu\n", info.loads[0],info.loads[1],info.loads[2]);
     ptr=s;
     break;
 
+  //Case 5: Gather the Uptime and parse to format from the sysinfo object.
   case 5:
     sysinfo(&info);
 
@@ -125,6 +139,7 @@ long *option;
     ptr=t;
     break;
 
+  //If server does not know command, return error.
 	default: ptr=err;
 	  break;
   }
