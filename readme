@@ -3,11 +3,11 @@ Please follow the following steps:
 
 1. rpcgen -k date.x
 
-2. gcc -o cli client.c date_clnt.c
+2. gcc -o client client.c date_clnt.c
 
-3. gcc -o svc server.c date_svc.c
+3. gcc -o server server.c date_svc.c
 
-4. ./svc &
+4. ./server &
 
-5. ./cli localhost
+5. ./client localhost
 
