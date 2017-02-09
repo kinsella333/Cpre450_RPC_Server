@@ -17,7 +17,7 @@ long get_response()
   printf("1. System Time\n");
   printf("2. CPU Usage\n");
   printf("3. Memory Usage\n");
-  printf("4. Load Procs per min --TODO\n");
+  printf("4. Load Procs per min\n");
   printf("5. Uptime\n");
   printf("6. Exit\n");
   printf("7. Kill Server and Exit\n");

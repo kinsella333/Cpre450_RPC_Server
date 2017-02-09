@@ -94,6 +94,12 @@ long *option;
 	  ptr=t;
 	  break;
 
+  case 4:
+    sysinfo(&info);
+    sprintf(s, "\bLoad Average at 1 Minute: %lu\nLoad Average at 5 Minutes: %lu\nLoad Average at 15 Minutes: %lu\n", info.loads[0],info.loads[1],info.loads[2]);
+    ptr=s;
+    break;
+
   case 5:
     sysinfo(&info);
 
