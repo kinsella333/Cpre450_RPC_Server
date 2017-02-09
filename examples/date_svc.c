@@ -6,6 +6,7 @@
 #include "date.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <rpc/pmap_clnt.h>
 #include <memory.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
