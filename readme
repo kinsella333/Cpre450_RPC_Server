@@ -1,6 +1,8 @@
 
 Please follow the following steps:
 
+sudo apt install rpcbind
+
 1. rpcgen -k date.x
 
 2. gcc -o client client.c date_clnt.c
@@ -10,4 +12,3 @@ Please follow the following steps:
 4. ./server &
 
 5. ./client localhost
-
