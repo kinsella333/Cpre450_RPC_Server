@@ -4,12 +4,16 @@
 #include<unistd.h>
 #include <dirent.h>
 #include <arpa/inet.h>
+#include<sys/stat.h>
+#include<sys/sendfile.h>
+#include<fcntl.h>
 
 int main(int argc , char *argv[])
 {
-    int connect_fd , client_fd , c , read_size;
+    int connect_fd , client_fd , c , read_size, filehandle, size;
     struct sockaddr_in server , client;
-    char command[1024], buf[1024], out[1024], error[] = "Error not accepted command";
+    struct stat fstat;
+    char command[32], buf[32], filename[32], out[1024], error[] = "Error not accepted command";
     DIR *d;
     struct dirent *dir;
 
@@ -51,7 +55,7 @@ int main(int argc , char *argv[])
 
 			if(strcmp(command, "ls") == 0 || strcmp(command, "dir") == 0){
             d = opendir(".");
-            sprintf(out, "\nFiles in Directory:\n");
+            sprintf(out, "\nContents of Directory:\n");
 
             if(d){
               while ((dir = readdir(d)) != NULL){
@@ -63,7 +67,21 @@ int main(int argc , char *argv[])
 						write(client_fd , out , sizeof(out));
 
 			}else if(strcmp(command, "get") == 0){
-            write(client_fd , "WIP" , sizeof("WIP"));
+            sscanf(buf, "%s %s", command, filename);
+            stat(filename, &fstat);
+            filehandle = open(filename, O_RDONLY);
+
+            size = fstat.st_size;
+            if(filehandle == -1){
+                size = 0;
+            }
+            send(client_fd, &size, sizeof(int), 0);
+
+            if(size){
+                send(client_fd, filename, sizeof(filename), 0);
+                sendfile(client_fd, filehandle, NULL, size);
+            }
+
       }else if(strcmp(command, "quit") == 0){
             write(client_fd , "Goodbye" , sizeof("Goodbye"));
       }else{
