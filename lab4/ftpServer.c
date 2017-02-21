@@ -1,14 +1,17 @@
 #include<stdio.h>
 #include<string.h>
 #include<sys/socket.h>
-#include<arpa/inet.h>
 #include<unistd.h>
+#include <dirent.h>
+#include <arpa/inet.h>
 
 int main(int argc , char *argv[])
 {
     int connect_fd , client_fd , c , read_size;
     struct sockaddr_in server , client;
-    char command[1024], buf[1024], error[] = "Error not accepted command";
+    char command[1024], buf[1024], out[1024], error[] = "Error not accepted command";
+    DIR *d;
+    struct dirent *dir;
 
     //Create socket
     connect_fd = socket(AF_INET , SOCK_STREAM , 0);
@@ -45,13 +48,21 @@ int main(int argc , char *argv[])
 			read_size = recv(client_fd , buf, sizeof(buf), 0);
 
       sscanf(buf, "%s", command);
-      printf("%s\n", command);
 
-			if(strcmp(command, "ls") == 0){
-						write(client_fd , command , sizeof(command));
+			if(strcmp(command, "ls") == 0 || strcmp(command, "dir") == 0){
+            d = opendir(".");
+            sprintf(out, "\nFiles in Directory:\n");
+
+            if(d){
+              while ((dir = readdir(d)) != NULL){
+                strcat(out, dir->d_name);
+                strcat(out, "\n");
+              }
+              closedir(d);
+            }
+						write(client_fd , out , sizeof(out));
+
 			}else if(strcmp(command, "get") == 0){
-            write(client_fd , "WIP" , sizeof("WIP"));
-      }else if(strcmp(command, "dir") == 0){
             write(client_fd , "WIP" , sizeof("WIP"));
       }else if(strcmp(command, "quit") == 0){
             write(client_fd , "Goodbye" , sizeof("Goodbye"));
