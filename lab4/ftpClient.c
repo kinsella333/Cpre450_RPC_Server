@@ -31,6 +31,9 @@ int main(int argc , char *argv[])
 
     //keep communicating with server
     do{
+        memset(server_reply, 0, sizeof(server_reply));
+        memset(message, 0, sizeof(message));
+
         printf("Enter message : ");
         scanf("%s" , message);
 

@@ -8,7 +8,7 @@ int main(int argc , char *argv[])
 {
     int connect_fd , client_fd , c , read_size;
     struct sockaddr_in server , client;
-    char command[1024];
+    char command[1024], buf[1024];
 
     //Create socket
     connect_fd = socket(AF_INET , SOCK_STREAM , 0);
@@ -40,13 +40,18 @@ int main(int argc , char *argv[])
     }
 
     do{
-			read_size = recv(client_fd , command , sizeof(command) , 0);
+      memset(buf, 0, sizeof(buf));
+      memset(command, 0, sizeof(command));
+			read_size = recv(client_fd , buf, sizeof(buf), 0);
 
-			if(strcmp(command, "kill") == 0){
-					sprintf(command, "Goodbye!");
-			}
-			sprintf(command, "%d", read_size);
-			write(client_fd , command , sizeof(command));
+      sscanf(buf, "%s %*s", command);
+
+			if(strcmp(command, "ls") == 0){
+						write(client_fd , command , sizeof(command));
+			}else{
+        		write(client_fd, buf, sizeof(buf));
+      }
+
 		}while(read_size > 0);
 
     return 0;
