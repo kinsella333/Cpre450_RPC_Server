@@ -8,7 +8,7 @@ int main(int argc , char *argv[])
 {
     int connect_fd , client_fd , c , read_size;
     struct sockaddr_in server , client;
-    char command[1024], buf[1024];
+    char command[1024], buf[1024], error[] = "Error not accepted command";
 
     //Create socket
     connect_fd = socket(AF_INET , SOCK_STREAM , 0);
@@ -49,8 +49,14 @@ int main(int argc , char *argv[])
 
 			if(strcmp(command, "ls") == 0){
 						write(client_fd , command , sizeof(command));
-			}else{
-        		write(client_fd, buf, sizeof(buf));
+			}else if(strcmp(command, "get") == 0){
+            write(client_fd , "WIP" , sizeof("WIP"));
+      }else if(strcmp(command, "dir") == 0){
+            write(client_fd , "WIP" , sizeof("WIP"));
+      }else if(strcmp(command, "quit") == 0){
+            write(client_fd , "Goodbye" , sizeof("Goodbye"));
+      }else{
+        		write(client_fd, error, sizeof(error));
       }
 
 		}while(read_size > 0);

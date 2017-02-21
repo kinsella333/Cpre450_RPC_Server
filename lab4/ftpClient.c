@@ -7,7 +7,7 @@ int main(int argc , char *argv[])
 {
     int sock;
     struct sockaddr_in server;
-    char message[1024] , server_reply[1024];
+    char message[1024] , server_reply[1024], quit[5];
 
     //Create socket
     sock = socket(AF_INET , SOCK_STREAM , 0);
@@ -35,7 +35,10 @@ int main(int argc , char *argv[])
         memset(message, 0, sizeof(message));
 
         printf("Enter message : ");
-        fgets(message, 10, stdin);
+        fgets(message, 32, stdin);
+        strncpy(quit, message, 4);
+        quit[4] = '\0';
+
         //Send some data
         if(send(sock , message , strlen(message) , 0) < 0){
             perror("Send failed");
@@ -48,7 +51,7 @@ int main(int argc , char *argv[])
             break;
         }
         printf("%s\n",server_reply);
-    }while(strcmp(message,"kill") != 0);
+    }while(strcmp(quit,"quit") != 0);
 
     close(sock);
     return 0;
