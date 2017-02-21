@@ -35,8 +35,7 @@ int main(int argc , char *argv[])
         memset(message, 0, sizeof(message));
 
         printf("Enter message : ");
-        scanf("%s" , message);
-
+        fgets(message, 10, stdin);
         //Send some data
         if(send(sock , message , strlen(message) , 0) < 0){
             perror("Send failed");

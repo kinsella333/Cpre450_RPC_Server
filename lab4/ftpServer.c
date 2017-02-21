@@ -44,7 +44,8 @@ int main(int argc , char *argv[])
       memset(command, 0, sizeof(command));
 			read_size = recv(client_fd , buf, sizeof(buf), 0);
 
-      sscanf(buf, "%s %*s", command);
+      sscanf(buf, "%s", command);
+      printf("%s\n", command);
 
 			if(strcmp(command, "ls") == 0){
 						write(client_fd , command , sizeof(command));
