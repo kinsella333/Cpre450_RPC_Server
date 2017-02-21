@@ -12,7 +12,7 @@ int main(int argc , char *argv[])
 {
     int connect_fd , client_fd , c , read_size, filehandle, size;
     struct sockaddr_in server , client;
-    struct stat fstat;
+    struct stat fileStat;
     char command[32], buf[32], filename[32], out[1024], error[] = "Error not accepted command";
     DIR *d;
     struct dirent *dir;
@@ -68,11 +68,14 @@ int main(int argc , char *argv[])
 
 			}else if(strcmp(command, "get") == 0){
             sscanf(buf, "%s %s", command, filename);
-            stat(filename, &fstat);
+            stat(filename, &fileStat);
             filehandle = open(filename, O_RDONLY);
 
-            size = fstat.st_size;
+            size = fileStat.st_size;
             if(filehandle == -1){
+                size = 0;
+            }
+            if(S_ISDIR(fileStat.st_mode)){
                 size = 0;
             }
             send(client_fd, &size, sizeof(int), 0);
