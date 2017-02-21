@@ -1,7 +1,7 @@
 
 Please follow the following steps:
 
-sudo apt install rpcbind
+0. sudo apt install rpcbind
 
 1. rpcgen -k date.x
 
